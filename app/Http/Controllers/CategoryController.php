@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 
 
 use App\Models\Category;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Request;
 
 class CategoryController
 {
@@ -20,5 +22,17 @@ class CategoryController
            Log::alert($exception);
            return response()->json($exception, 500);
        }
+    }
+
+    public function store(Request $request)
+    {
+        try{
+            Category::createCategory($request->toArray());
+        }
+        catch (QueryException $exception)
+        {
+            Log::alert($exception->getMessage());
+            return response()->json($exception, 422);
+        }
     }
 }
