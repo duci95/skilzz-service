@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Mails\ActivateUserMail;
 use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
@@ -20,9 +24,14 @@ class UserController extends Controller
            'passwordRepeat' => 'required|same:password'
         ]);
 
-
         try{
+            $token = Hash::make(Str::random(10));
+            $request['token'] = $token;
             User::createUser($request->toArray());
+//            $data = array('token' => $token);
+//            Mail::send('mails.activate', $data,function ($message){
+//               $message->to('dusan.krsmanovic.95@gmail.com')->subject('Activate');
+//            });
             return response()->json(null,201);
         }
         catch (QueryException $exception){

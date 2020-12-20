@@ -1,21 +1,20 @@
 <?php
 
-
 namespace App\Http\Controllers;
-
 
 use App\Models\Category;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Http\Request;
+use \Illuminate\Http\JsonResponse as JSON;
 
-class CategoryController
+class CategoryController extends Controller
 {
-    public function index()
+    public function index() : JSON
     {
        try{
-           $categories = Category::all();
-           return response()->json($categories, 200);
+           $categories = Category::index();
+           return response()->json($categories);
        }
        catch (\Throwable $exception)
        {
@@ -27,12 +26,18 @@ class CategoryController
     public function store(Request $request)
     {
         try{
-            Category::createCategory($request->toArray());
+            Category::store($request->toArray());
+            return response(null, 201);
         }
         catch (QueryException $exception)
         {
             Log::alert($exception->getMessage());
             return response()->json($exception, 422);
+        }
+        catch (\Exception $exception)
+        {
+            Log::alert($exception->getMessage());
+            return response()->json($exception, 500);
         }
     }
 }

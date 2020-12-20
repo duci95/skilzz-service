@@ -25,14 +25,12 @@ class User extends Model
     ];
 
 
-    public static function createUser(array $array) : void
+    public static function createUser(array $array)
     {
         $user = new User();
 
-        $user->token = Hash::make(Str::random(10));
-        $array['password'] = Hash::make($user->password);
-
         $user->fill($array);
         $user->save();
+
     }
 }
